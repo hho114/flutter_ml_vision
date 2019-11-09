@@ -6,30 +6,32 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
-class ImageLabelDetectorCamera extends StatefulWidget {
-  static const String id = 'camera';
+class AIUseGallery extends StatefulWidget {
+  static const String id = 'gallery';
 
   @override
-  _ImageLabelDetectorCameraState createState() =>
-      _ImageLabelDetectorCameraState();
+  _AIUseGalleryState createState() =>
+      _AIUseGalleryState();
 }
 
-class _ImageLabelDetectorCameraState extends State<ImageLabelDetectorCamera> {
+class _AIUseGalleryState extends State<AIUseGallery> {
   File _image;
   bool _loading = false;
+  String speakText;
+  int faceCounter =0;
 
   List<ImageLabel> labels;
   List<String> labelList;
-
   List<double> confidenceList;
-  String speakText;
+  List<Face> faces;
+
   FlutterTts flutterTts = FlutterTts();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Use Image Picker'),
+        title: Text('Use Image Gallery'),
       ),
       body: ModalProgressHUD(
         child: _image == null
@@ -55,34 +57,39 @@ class _ImageLabelDetectorCameraState extends State<ImageLabelDetectorCamera> {
     });
 
     try {
-      final imageFile = await ImagePicker.pickImage(source: ImageSource.camera);
+      final imageFile =
+          await ImagePicker.pickImage(source: ImageSource.gallery);
       if (imageFile == null) {
         throw Exception('File is not available');
       }
       final image = FirebaseVisionImage.fromFile(imageFile);
-      final imageLabeler =
-          FirebaseVision.instance.imageLabeler(ImageLabelerOptions(
-        confidenceThreshold: 0.60,
-      ));
+      final imageLabeler = FirebaseVision.instance.imageLabeler(
+        ImageLabelerOptions(confidenceThreshold: 0.60),
+      );
       labels = await imageLabeler.processImage(image);
+      final faceDetector = FirebaseVision.instance.faceDetector();
+      faces = await faceDetector.processImage(image);
+
       setState(() {
         _image = imageFile;
         _loading = false;
+        faceCounter = faces.length;
       });
       labelList = new List();
       speakText = '';
       for (ImageLabel label in labels) {
         labelList.add(label.text);
+
         speakText += ' ' + label.text;
       }
-
       confidenceList = new List();
       for (ImageLabel label in labels) {
         confidenceList.add(label.confidence);
       }
-      await flutterTts.speak('The image ralate to $speakText');
 
+      await flutterTts.speak('The image relate to$speakText and there $faceCounter people in the image');
       imageLabeler.close();
+      faceDetector.close();
     } catch (e) {
       print(e);
     }

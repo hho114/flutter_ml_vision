@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
@@ -9,7 +10,8 @@ class ImageLabelDetectorCamera extends StatefulWidget {
   static const String id = 'camera';
 
   @override
-  _ImageLabelDetectorCameraState createState() => _ImageLabelDetectorCameraState();
+  _ImageLabelDetectorCameraState createState() =>
+      _ImageLabelDetectorCameraState();
 }
 
 class _ImageLabelDetectorCameraState extends State<ImageLabelDetectorCamera> {
@@ -18,8 +20,10 @@ class _ImageLabelDetectorCameraState extends State<ImageLabelDetectorCamera> {
 
   List<ImageLabel> labels;
   List<String> labelList;
-  List<String> entityIdList;
+
   List<double> confidenceList;
+  String speakText;
+  FlutterTts flutterTts = FlutterTts();
 
   @override
   Widget build(BuildContext context) {
@@ -51,30 +55,32 @@ class _ImageLabelDetectorCameraState extends State<ImageLabelDetectorCamera> {
     });
 
     try {
-      final imageFile =
-          await ImagePicker.pickImage(source: ImageSource.camera);
+      final imageFile = await ImagePicker.pickImage(source: ImageSource.camera);
       if (imageFile == null) {
         throw Exception('File is not available');
       }
       final image = FirebaseVisionImage.fromFile(imageFile);
-      final imageLabeler = FirebaseVision.instance.imageLabeler();
+      final imageLabeler =
+          FirebaseVision.instance.imageLabeler(ImageLabelerOptions(
+        confidenceThreshold: 0.60,
+      ));
       labels = await imageLabeler.processImage(image);
       setState(() {
         _image = imageFile;
         _loading = false;
       });
       labelList = new List();
+      speakText = '';
       for (ImageLabel label in labels) {
         labelList.add(label.text);
-        // entityIdList.add(label.entityId);
-        // confidenceList.add(label.confidence);
+        speakText += ' ' + label.text;
       }
+
       confidenceList = new List();
       for (ImageLabel label in labels) {
-        // labelList.add(label.text);
-        // entityIdList.add(label.entityId);
         confidenceList.add(label.confidence);
       }
+      await flutterTts.speak('The image ralate to $speakText');
 
       imageLabeler.close();
     } catch (e) {

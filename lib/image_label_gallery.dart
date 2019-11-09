@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
@@ -16,11 +17,13 @@ class ImageLabelDetectorGallery extends StatefulWidget {
 class _ImageLabelDetectorGalleryState extends State<ImageLabelDetectorGallery> {
   File _image;
   bool _loading = false;
+  String speakText;
 
   List<ImageLabel> labels;
   List<String> labelList;
-  List<String> entityIdList;
   List<double> confidenceList;
+
+  FlutterTts flutterTts = FlutterTts();
 
   @override
   Widget build(BuildContext context) {
@@ -67,18 +70,18 @@ class _ImageLabelDetectorGalleryState extends State<ImageLabelDetectorGallery> {
         _loading = false;
       });
       labelList = new List();
+      speakText = '';
       for (ImageLabel label in labels) {
         labelList.add(label.text);
-        // entityIdList.add(label.entityId);
-        // confidenceList.add(label.confidence);
+
+        speakText += ' ' + label.text;
       }
       confidenceList = new List();
       for (ImageLabel label in labels) {
-        // labelList.add(label.text);
-        // entityIdList.add(label.entityId);
         confidenceList.add(label.confidence);
       }
 
+      await flutterTts.speak('The image relate to$speakText');
       imageLabeler.close();
     } catch (e) {
       print(e);

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
@@ -15,10 +16,12 @@ class FaceDetect extends StatefulWidget {
 class _FaceDetectState extends State<FaceDetect> {
   File _image;
   bool _loading = false;
-  int faceCounter;
+  int faceCounter =0;
 
   List<Face> faces;
-  
+    FlutterTts flutterTts = new FlutterTts();
+
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +68,8 @@ class _FaceDetectState extends State<FaceDetect> {
         _loading = false;
         
       });
+      await flutterTts.speak('There $faceCounter people in the image');
 
-      
       
       faceDetector.close();
     } catch (e) {

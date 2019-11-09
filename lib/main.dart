@@ -3,8 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_ml_vision/face_detect.dart';
 import 'package:flutter_ml_vision/home.dart';
-import 'package:flutter_ml_vision/image_label_detector.dart';
+import 'package:flutter_ml_vision/image_label_camera.dart';
+import 'package:flutter_ml_vision/image_label_gallery.dart';
 
 void main() => runApp(MyApp());
 
@@ -18,8 +20,9 @@ class MyApp extends StatelessWidget {
       routes: 
       {
         'home': (context)=> Home(),
-        'image': (context)=> ImageLabelDetector(),
-
+        'gallery': (context)=> ImageLabelDetectorGallery(),
+        'camera': (context)=> ImageLabelDetectorCamera(),
+        'face_detect': (context)=> FaceDetect(),
       },
     );
   }

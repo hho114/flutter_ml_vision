@@ -32,6 +32,7 @@ class Home extends StatelessWidget {
                 title: 'Face Detector',
                 onPressed: () => Navigator.pushNamed(context, FaceDetect.id),
               ),
+              
             ],
           ),
         ),

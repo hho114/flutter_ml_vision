@@ -9,7 +9,8 @@ class ImageLabelDetectorGallery extends StatefulWidget {
   static const String id = 'gallery';
 
   @override
-  _ImageLabelDetectorGalleryState createState() => _ImageLabelDetectorGalleryState();
+  _ImageLabelDetectorGalleryState createState() =>
+      _ImageLabelDetectorGalleryState();
 }
 
 class _ImageLabelDetectorGalleryState extends State<ImageLabelDetectorGallery> {
@@ -57,7 +58,9 @@ class _ImageLabelDetectorGalleryState extends State<ImageLabelDetectorGallery> {
         throw Exception('File is not available');
       }
       final image = FirebaseVisionImage.fromFile(imageFile);
-      final imageLabeler = FirebaseVision.instance.imageLabeler();
+      final imageLabeler = FirebaseVision.instance.imageLabeler(
+        ImageLabelerOptions(confidenceThreshold: 0.60),
+      );
       labels = await imageLabeler.processImage(image);
       setState(() {
         _image = imageFile;

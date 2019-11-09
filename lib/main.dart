@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
         'gallery': (context)=> ImageLabelDetectorGallery(),
         'camera': (context)=> ImageLabelDetectorCamera(),
         'face_detect': (context)=> FaceDetect(),
+        
       },
     );
   }

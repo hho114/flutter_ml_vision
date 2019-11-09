@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
-class ImageLabelDetector extends StatefulWidget {
-  static const String id = 'image';
+class ImageLabelDetectorGallery extends StatefulWidget {
+  static const String id = 'gallery';
 
   @override
-  _ImageLabelDetectorState createState() => _ImageLabelDetectorState();
+  _ImageLabelDetectorGalleryState createState() => _ImageLabelDetectorGalleryState();
 }
 
-class _ImageLabelDetectorState extends State<ImageLabelDetector> {
+class _ImageLabelDetectorGalleryState extends State<ImageLabelDetectorGallery> {
   File _image;
   bool _loading = false;
 

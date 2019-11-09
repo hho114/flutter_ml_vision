@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ml_vision/ai_use_camera.dart';
+import 'package:flutter_ml_vision/ai_use_gallery.dart';
 import 'package:flutter_ml_vision/components/round_button.dart';
 import 'package:flutter_ml_vision/face_detect.dart';
-import 'package:flutter_ml_vision/image_label_camera.dart';
-import 'package:flutter_ml_vision/image_label_gallery.dart';
 
 class Home extends StatelessWidget {
   static const String id = 'home';
@@ -20,12 +20,12 @@ class Home extends StatelessWidget {
               RoundedButton(
                 colour: Colors.blueAccent,
                 title: 'Use Gallery Image',
-                onPressed: () => Navigator.pushNamed(context, ImageLabelDetectorGallery.id),
+                onPressed: () => Navigator.pushNamed(context, AIUseGallery.id),
               ),
               RoundedButton(
                 colour: Colors.blueAccent,
                 title: 'Use Camera',
-                onPressed: () => Navigator.pushNamed(context, ImageLabelDetectorCamera.id),
+                onPressed: () => Navigator.pushNamed(context, AIUseCamera.id),
               ),
               RoundedButton(
                 colour: Colors.blueAccent,

@@ -63,18 +63,19 @@ class _MyHomePageState extends State<MyHomePage> {
   List<String> data = [];
   final _scanKey = GlobalKey<CameraMlVisionState>();
   FlutterTts flutterTts = FlutterTts();
-  String speakText='';
+  String speakText = '';
   // BarcodeDetector detector = FirebaseVision.instance.barcodeDetector();
   ImageLabeler detector =
       FirebaseVision.instance.imageLabeler(ImageLabelerOptions(
-    confidenceThreshold: 0.8,
+    confidenceThreshold: 0.75,
   ));
 
-@override
-void initState() { 
-  super.initState();
-  flutterTts.setSpeechRate(0.8);
-}
+  @override
+  void initState() {
+    super.initState();
+    flutterTts.setSpeechRate(0.8);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,40 +94,30 @@ void initState() {
               detector: detector.processImage,
               onResult: (labels) {
                 if (isTap) {
-                  
-                
-                for (ImageLabel label in labels) {
-
-                  if ( !mounted) {
-                    return;
-                  }
-                  
-                  else if (data.contains(label.text)) {
-                    speakText+=' ' +label.text;
-
-                    
-                  }else
-                  {
+                  for (ImageLabel label in labels) {
+                    if (!mounted) {
+                      return;
+                    } else if (data.contains(label.text)) {
+                      speakText += ' ' + label.text;
+                    } else {
                       setState(() {
-                    data.add(label.text);
-                    speakText+=' ' +label.text;
-                   
-                    });
+                        data.add(label.text);
+                        speakText += ' ' + label.text;
+                      });
+                    }
                   }
 
-                  
-                }
-                
-                if (speakText == '') {
-                  flutterTts.speak('There may be nothing, please try again');
-                  
-                }
-                flutterTts.speak('There are $speakText');
-                setState(() {
-                  isTap=false;
-                  speakText='';
-                  // data.clear();
-                });
+                  if (speakText.isEmpty) {
+                    flutterTts.speak('There may be nothing, please try again');
+                  } else {
+                    flutterTts.speak('There $speakText');
+                  }
+
+                  setState(() {
+                    isTap = false;
+                    speakText = '';
+                    // data.clear();
+                  });
                 }
               },
               onDispose: () {
@@ -157,12 +148,12 @@ void initState() {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      RaisedButton(
-                        onPressed: () {
-                          _scanKey.currentState.toggle();
-                        },
-                        child: Text('Start/Pause camera'),
-                      ),
+                      // RaisedButton(
+                      //   onPressed: () {
+                      //     _scanKey.currentState.toggle();
+                      //   },
+                      //   child: Text('Start/Pause camera'),
+                      // ),
                       RaisedButton(
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(

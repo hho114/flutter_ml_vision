@@ -1,42 +1,109 @@
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_ml_vision/ai_use_camera.dart';
-import 'package:flutter_ml_vision/ai_use_gallery.dart';
-import 'package:flutter_ml_vision/components/round_button.dart';
-import 'package:flutter_ml_vision/face_detect.dart';
+import 'package:flutter_camera_ml_vision/flutter_camera_ml_vision.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
-class Home extends StatelessWidget {
-  static const String id = 'home';
+class Home extends StatefulWidget {
   
+
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  bool isTap = false;
+  List<String> data = [];
+  final _scanKey = GlobalKey<CameraMlVisionState>();
+  FlutterTts flutterTts = FlutterTts();
+  String speakText = '';
+  // BarcodeDetector detector = FirebaseVision.instance.barcodeDetector();
+  ImageLabeler detector =
+      FirebaseVision.instance.imageLabeler(ImageLabelerOptions(
+    confidenceThreshold: 0.75,
+  ));
+
+  @override
+  void initState() {
+    super.initState();
+    flutterTts.setSpeechRate(0.8);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Label Image Detector'),
+        title: Text('AI VISION'),
       ),
-      body: Container(
-        child: Center(
-          child: Column(
-            children: <Widget>[
-              RoundedButton(
-                colour: Colors.blueAccent,
-                title: 'Use Gallery Image',
-                onPressed: () => Navigator.pushNamed(context, AIUseGallery.id),
+      body: GestureDetector(
+        onTap: () {
+          isTap = true;
+        },
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            CameraMlVision<List<ImageLabel>>(
+              key: _scanKey,
+              detector: detector.processImage,
+              onResult: (labels) {
+                if (isTap) {
+                  for (ImageLabel label in labels) {
+                    if (!mounted) {
+                      return;
+                    } else if (data.contains(label.text)) {
+                      speakText += ' ' + label.text;
+                    } else {
+                      setState(() {
+                        data.add(label.text);
+                        speakText += ' ' + label.text;
+                      });
+                    }
+                  }
+
+                  if (speakText.isEmpty) {
+                    flutterTts.speak('There may be nothing, please try again');
+                  } else {
+                    flutterTts.speak('There $speakText');
+                  }
+
+                  setState(() {
+                    isTap = false;
+                    speakText = '';
+                    // data.clear();
+                  });
+                }
+              },
+              onDispose: () {
+                detector.close();
+              },
+            ),
+            Container(
+              alignment: Alignment.bottomCenter,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxHeight: 250),
+                    child: Scrollbar(
+                      child: ListView(
+                        children: data.map((d) {
+                          return Container(
+                            color: Color(0xAAFFFFFF),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Text(d),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                  
+                ],
               ),
-              RoundedButton(
-                colour: Colors.blueAccent,
-                title: 'Use Camera',
-                onPressed: () => Navigator.pushNamed(context, AIUseCamera.id),
-              ),
-              RoundedButton(
-                colour: Colors.blueAccent,
-                title: 'Face Detector',
-                onPressed: () => Navigator.pushNamed(context, FaceDetect.id),
-              ),
-              
-            ],
-          ),
+            ),
+          ],
         ),
-      ),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

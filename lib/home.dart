@@ -16,6 +16,7 @@ class _HomeState extends State<Home> {
   final _scanKey = GlobalKey<CameraMlVisionState>();
   FlutterTts flutterTts = FlutterTts();
   String speakText = '';
+  int count = 0;
   // BarcodeDetector detector = FirebaseVision.instance.barcodeDetector();
   ImageLabeler detector =
       FirebaseVision.instance.imageLabeler(ImageLabelerOptions(
@@ -50,24 +51,44 @@ class _HomeState extends State<Home> {
                     if (!mounted) {
                       return;
                     } else if (data.contains(label.text)) {
-                      speakText += ' ' + label.text;
+
+                      setState(() {
+                        
+                        if (count == 0) {
+                          speakText += label.text;
+                          count++;
+                        } else {
+                          speakText += ' and ' +label.text;
+                          
+                        }
+                        
+                      });
                     } else {
                       setState(() {
                         data.add(label.text);
-                        speakText += ' ' + label.text;
+                        if (count == 0) {
+                          speakText += label.text;
+                          count++;
+                        } else {
+                          speakText += ' and ' +label.text;
+                          
+                        }
+                        
                       });
                     }
                   }
 
                   if (speakText.isEmpty) {
-                    flutterTts.speak('There may be nothing, please try again');
+                    flutterTts.speak('There maybe nothing, please try again');
                   } else {
                     flutterTts.speak('There $speakText');
                   }
 
                   setState(() {
+
                     isTap = false;
                     speakText = '';
+                    count =0;
                     // data.clear();
                   });
                 }

@@ -79,8 +79,12 @@ class _HomeState extends State<Home> {
                       },
                       onResult: (faces) {
                         if (playSpeak && detectType == DetectType.face) {
-                          if (faces == null || faces.isEmpty || !mounted) {
+                          if (!mounted) {
                             return;
+                          } else if (faces == null || faces.isEmpty) {
+                            setState(() {
+                              count = 0;
+                            });
                           } else {
                             setState(() {
                               _faces = []..addAll(faces);
@@ -97,7 +101,7 @@ class _HomeState extends State<Home> {
                           setState(() {
                             count = 0;
                             playSpeak = false;
-                            speakText='';
+                            speakText = '';
                           });
                         }
                       },
@@ -111,50 +115,55 @@ class _HomeState extends State<Home> {
                     key: _scanKey,
                     detector: detector.processImage,
                     onResult: (labels) {
-                      for (ImageLabel label in labels) {
-                        if (playSpeak && detectType == DetectType.object) {
-                          if (!mounted) {
-                            return;
-                          } else if (data.contains(label.text)) {
-                            setState(() {
-                              if (count == 0) {
-                                speakText += label.text;
-                                count++;
-                              } else {
-                                speakText += ' and ' + label.text;
-                              }
-                            });
-                          } else {
-                            setState(() {
-                              data.add(label.text);
-                              if (count == 0) {
-                                speakText += label.text;
-                                count++;
-                              } else {
-                                speakText += ' and ' + label.text;
-                              }
-                            });
-                          }
+                      if (playSpeak && detectType == DetectType.object) {
+                        if (!labels.isEmpty) {
+                          for (ImageLabel label in labels) {
+                            flutterTts.speak('There ');
+                             if (data.contains(label.text)) {
+                              setState(() {
+                                if (count == 0) {
+                                  speakText += label.text;
+                                  count++;
+                                } 
+                                else{
+                                  speakText += ' and  ${label.text}';
+                                }
+                              });
+                              
+                            } else  {
+                              setState(() {
+                                data.add(label.text);
+                                if (count == 0) {
+                                  speakText += label.text;
+                                  count++;
+                                } 
+                                else{
+                                  speakText += ' and  ${label.text}';
+                                }
+                              });
+                            }
 
-                          if (speakText.isEmpty) {
-                            flutterTts
-                                .speak('There maybe nothing, please try again');
-                          } else {
                             flutterTts.speak('There $speakText');
-                          }
 
+                            
+                            // onDispose: () {
+                            //   detector.close();
+                            // },
+
+                          }
                           setState(() {
-                            speakText = '';
-                            count = 0;
-                            playSpeak = false;
-                          });
-                          // onDispose: () {
-                          //   detector.close();
-                          // },
+                              speakText = '';
+                              count = 0;
+                              playSpeak = false;
+                            });
+                        } else {
+                          flutterTts
+                              .speak('There maybe nothing, please try again');
+                          playSpeak = false;
+                          
                         }
                       }
-                    },
-                  ),
+                    }),
             Container(
               alignment: Alignment.bottomCenter,
               child: Column(

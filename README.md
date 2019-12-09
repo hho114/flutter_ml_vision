@@ -1,4 +1,4 @@
-# HHD Postpartum Project
+# AI is your eyes Project
 
 I’m passionate about building great mobile application that make people’s lives easier. Therefore I create this application to help visually impaired people. 
 The application goals are simple and reliable.
@@ -81,6 +81,7 @@ class MyApp extends StatelessWidget {
 - [Flutter Camera ML Vision](https://pub.dev/packages/flutter_camera_ml_vision)
 
 - [Camera](https://pub.dev/packages/camera)
+
 
 ## Credits
 

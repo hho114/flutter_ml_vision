@@ -13,25 +13,25 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<Face> _faces = [];
-  List<String> data = [];
+
+  List<Face> _faces = [];//list contain face object getting from detector
+  List<String> data = [];//list contain object for display on screen
   final _scanKey = GlobalKey<CameraMlVisionState>();
-  FlutterTts flutterTts = FlutterTts();
-  String speakText = '';
-  bool playSpeak = false;
-  int count = 0;
-  DetectType detectType = DetectType.object;
-  CameraLensDirection cameraLensDirection = CameraLensDirection.back;
-  // BarcodeDetector detector = FirebaseVision.instance.barcodeDetector();
+  FlutterTts flutterTts = FlutterTts();// class object for text to speech
+  String speakText = '';// string contain speak content
+  bool playSpeak = false;//switch for play speak
+  int count = 0;//count amount object get detected 
+  DetectType detectType = DetectType.object; //whether use face detect or object detect
+  CameraLensDirection cameraLensDirection = CameraLensDirection.back;//which camera to use
   ImageLabeler detector =
       FirebaseVision.instance.imageLabeler(ImageLabelerOptions(
     confidenceThreshold: 0.75,
-  ));
+  ));//initial image label detector
   FaceDetector faceDetector =
       FirebaseVision.instance.faceDetector(FaceDetectorOptions(
     enableTracking: true,
     mode: FaceDetectorMode.accurate,
-  ));
+  ));//initial face detector
 
   @override
   void initState() {
@@ -46,15 +46,16 @@ class _HomeState extends State<Home> {
         title: Text(''),
       ),
       body: GestureDetector(
+        //Decide whether to use face detect or object detect
         onTap: () {
           setState(() {
-            detectType = DetectType.object;
+            detectType = DetectType.object;//if it is tap then set detect type to object
             playSpeak = true;
           });
         },
         onLongPress: () {
           setState(() {
-            detectType = DetectType.face;
+            detectType = DetectType.face;//if it is long press then set detect type to face
             playSpeak = true;
           });
         },
@@ -78,24 +79,30 @@ class _HomeState extends State<Home> {
                         );
                       },
                       onResult: (faces) {
-                        if (playSpeak && detectType == DetectType.face) {
-                          if (!mounted) {
+                        if (playSpeak && detectType == DetectType.face) //if user touch screen and it is face detect
+                        {
+                          if (!mounted) //if camera is not turn on
+                           {
                             return;
-                          } else if (faces == null || faces.isEmpty) {
+                          } else if (faces == null || faces.isEmpty) //else if face list is empty
+                          {
                             setState(() {
                               count = 0;
                             });
-                          } else {
+                          } else //else list have some things
+                          {
                             setState(() {
-                              _faces = []..addAll(faces);
+                              _faces = []..addAll(faces);//add all face to panter
                               count = faces.length;
                             });
                           }
 
-                          if (count == 0) {
+                          if (count == 0) //if list is empty
+                          {
                             flutterTts
                                 .speak('There maybe nothing, please try again');
-                          } else {
+                          } else // if list have faces
+                          {
                             flutterTts.speak('There $count people');
                           }
                           setState(() {
@@ -116,10 +123,12 @@ class _HomeState extends State<Home> {
                     detector: detector.processImage,
                     onResult: (labels) {
                       if (playSpeak && detectType == DetectType.object) {
-                        if (!labels.isEmpty) {
+                        if (!labels.isEmpty) //if label list is not empty
+                         {
                           for (ImageLabel label in labels) {
                             flutterTts.speak('There ');
-                             if (data.contains(label.text)) {
+                             if (data.contains(label.text)) //if label already in the list 
+                             {
                               setState(() {
                                 if (count == 0) {
                                   speakText += label.text;
@@ -146,9 +155,6 @@ class _HomeState extends State<Home> {
                             flutterTts.speak('There $speakText');
 
                             
-                            // onDispose: () {
-                            //   detector.close();
-                            // },
 
                           }
                           setState(() {

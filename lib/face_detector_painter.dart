@@ -1,4 +1,6 @@
-//This file is open source from camera ml vision example, I do not write this file
+/// Credit: Camera ML Vision
+/// This file contain code from open source camera ml vision example, I did not write this file
+/// Source: https://pub.dev/packages/flutter_camera_ml_vision
 
 import 'package:flutter/material.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';

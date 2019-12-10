@@ -1,3 +1,8 @@
+/// Huy Ho
+/// CPSC 481 Project
+/// This file contain main home funciton and display for application
+
+
 import 'package:camera/camera.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';

@@ -1,4 +1,6 @@
-
+///Huy Ho
+///CPSC 481 Project
+///This file contain the main root file where application compile will launch
 
 import 'package:flutter/material.dart';
 import 'package:flutter_ml_vision/home.dart';

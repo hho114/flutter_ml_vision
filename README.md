@@ -3,6 +3,12 @@
 I’m passionate about building great mobile application that make people’s lives easier. Therefore I create this application to help visually impaired people. 
 The application goals are simple and reliable.
 
+## Project Submission
+
+- [All submit files in "doc" directory (doc/*)](doc)
+
+- [All code files in "lib" directory (lib/*)](lib)
+
 ## IDE Setup
 
 - [Get started with Flutter on Windows](https://medium.com/fnplus/setting-up-flutter-for-windows-ca2c5e643fdf)
@@ -81,8 +87,3 @@ class MyApp extends StatelessWidget {
 - [Flutter Camera ML Vision](https://pub.dev/packages/flutter_camera_ml_vision)
 
 - [Camera](https://pub.dev/packages/camera)
-
-
-## Credits
-
-[Alex Ho](https://github.com/hho114): front-end, back-end, research, maintenance, testing.
